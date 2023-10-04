@@ -1,0 +1,88 @@
+import tkinter as tk
+from tkinter import messagebox
+
+def save_attendance():
+    student_name = student_names[current_student_idx]
+    attendance_status = status_var.get()
+
+    if attendance_status == "Present":
+        present_students.append(student_name)
+    else:
+        absent_students.append(student_name)
+
+    update_display()
+
+def update_display():
+    global current_student_idx
+
+    if current_student_idx < len(student_names) - 1:
+        current_student_idx += 1
+        student_name_var.set(student_names[current_student_idx])
+        status_var.set("Present")  # Default to "Present" for the next student
+        status_dropdown.configure(state="active")
+    else:
+        status_var.set("")  # Clear the status dropdown
+        status_dropdown.configure(state="disabled")
+        save_button.configure(state="disabled")
+
+def start_attendance():
+    save_button.configure(state="active")
+    update_display()
+
+# Initialize lists to store attendance data
+present_students = []
+absent_students = []
+
+student_names = ["Raju", "Kamal", "samy", "nesan", "raja"]
+current_student_idx = -1
+
+# Create the main window
+root = tk.Tk()
+root.title("Attendance Tracker")
+
+# Create and pack labels, dropdown menu, and buttons
+student_name_label = tk.Label(root, text="Student Name:")
+student_name_label.pack()
+student_name_var = tk.StringVar()
+student_name_entry = tk.Entry(root, textvariable=student_name_var, state="disabled")
+student_name_entry.pack()
+
+status_label = tk.Label(root, text="Attendance Status:")
+status_label.pack()
+status_var = tk.StringVar()
+status_var.set("")  # Default value
+status_dropdown = tk.OptionMenu(root, status_var, "Present", "Absent")
+status_dropdown.pack()
+
+start_button = tk.Button(root, text="Start Attendance", command=start_attendance)
+start_button.pack()
+
+save_button = tk.Button(root, text="Save Attendance", command=save_attendance, state="disabled")
+save_button.pack()
+
+# Create labels to display attendance summary
+present_label = tk.Label(root, text="Number of students present: 0")
+present_label.pack()
+absent_label = tk.Label(root, text="Number of students absent: 0")
+absent_label.pack()
+
+# Initialize the display
+update_display()
+
+root.mainloop()
+
+# After Tkinter main loop exits, you can calculate and display attendance statistics
+percentage = (len(present_students) / len(student_names) * 100)
+print("Number of students present: ", len(present_students))
+print("Number of students absent: ", len(absent_students))
+print("Today's attendance percentage: ", percentage)
+
+# Print the present students with serial numbers
+print("Students Present List:")
+for idx, student in enumerate(present_students, start=1):
+    print(f"{idx}. {student}")
+
+# Print the absent students with serial numbers
+print("Students Absent List:")
+for idx, student in enumerate(absent_students, start=1):
+    print(f"{idx}. {student}")
